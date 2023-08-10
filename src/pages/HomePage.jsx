@@ -1,23 +1,36 @@
 import { styled } from "styled-components"
 import miaudote from "../images/miaudote-logo.svg"
+import Header from "../components/Header"
+import { Link } from "react-router-dom"
 export default function HomePage(){
     return(
+        <>
+        <Header />
         <PageContainer>
-            <img src={miaudote} />
+            <img src={miaudote} alt="Miaudote logo" />
             <h1>Bem-vindo ao Miaudote. Nosso portal de adoção para todos pets!</h1>
 
             <p>Explore nossa galeria e <b>encontre o pet perfeito para se tornar parte da sua família</b>.</p>
+            <Link to="/pets">
             <button>Quero adotar um pet!</button>
+            </Link>
 
-            <p><b>Cadastre um pet para adoção</b> e jude-nos a unir animais adoráveis com famílias amorosas.</p>
+            <p><b>Cadastre um pet para adoção</b> e ajude-nos a unir animais adoráveis com famílias amorosas.</p>
+            <Link to="/new-pet">
             <button>Cadastrar um pet!</button>
+            </Link>
 
             <p><b>Já faz parte da família MiAudote?</b></p>
             <div>
+                <Link to='/signin'>
                 <p><u>Entrar</u></p>
+                </Link>
+                <Link to='/signup'>
                 <p><u>Cadastrar-se</u></p>
+                </Link>
             </div>
         </PageContainer>
+        </>
     )
 }
 const PageContainer = styled.div`
@@ -29,7 +42,7 @@ const PageContainer = styled.div`
     gap: 1.5em;
     text-align: center;
     img{
-        width: 50vw;
+        width: 45vw;
     }
     button{
         margin-bottom: 1.5em;
