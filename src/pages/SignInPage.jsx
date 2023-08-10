@@ -2,7 +2,7 @@ import { styled } from "styled-components";
 import miaudote from "../images/miaudote-logo.svg";
 import { useForm } from "react-hook-form";
 import validator from "validator";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../contexts/userContext";
 import axios from "axios";
@@ -61,16 +61,17 @@ export default function SignInPage(){
                         type="password"
                         autoComplete="current-password"
                         placeholder="Digite sua senha"
-                        {...register("password", {required:true, minLength: 8})}
+                        {...register("password", {required:true})}
                     />
                     {errors?.password?.type === 'required' && <p className="error-message">A senha é obrigatória.</p>}
-                    {errors?.password?.type === 'minLength' && <p className="error-message">Sua senha deve ter no mínimo 8 caracteres.</p>}
                     
                     <button type="submit">Entrar</button>
                 </form>
             </div>
             <p>Ainda não faz parte da família MiAudote?</p>
-            <p><u>Crie uma nova conta aqui.</u></p>
+            <Link to='/signup'>
+                <p><u>Crie uma nova conta aqui.</u></p>
+            </Link>
         </PageContainer>
     )
 }
