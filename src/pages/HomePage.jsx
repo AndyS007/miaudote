@@ -37,9 +37,6 @@ const PageContainer = styled.div`
     div{
         display: flex;
         gap: 2.5em;
-
-        u{
-            cursor: pointer;
-        }
+        margin-top: -1em;
     }
 `

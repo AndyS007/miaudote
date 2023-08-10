@@ -2,6 +2,7 @@ import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
     * {
+        box-sizing: border-box;
         font-family: 'Inter', sans-serif;
         font-style: normal;
         font-weight: 400;
@@ -24,13 +25,29 @@ const GlobalStyle = createGlobalStyle`
         font-size: 2.5em;
         font-weight: 600;
     }
+    h2{
+        font-size: 2em;
+        font-weight: 500;
+    }
     p{
-        font-size: 1.25em;
+        font-size: 1.125em;
         text-align: left;
         b{
             font-weight: 600;
         }
+        u{
+            cursor: pointer;
+        }
     }
+    p.error-message{
+        color: rgb(255, 72, 72);
+        font-size: 0.75rem;
+        margin-top: -0.5em;
+        margin-bottom: 1em;
+        width: 100%;
+        text-align: left;
+    }
+
     img{
         max-width: 100vw;
     }
@@ -45,6 +62,35 @@ const GlobalStyle = createGlobalStyle`
         border-radius: 0.25em;
         cursor: pointer;
     }
+
+        form{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            label{
+                width: 100%;
+                text-align: left;
+                padding-bottom: 0.5em;
+                font-size: 1.25em;
+            }
+
+            input{
+                width: 100%;
+                padding: 0.75em 0.5em;
+                border: 1px solid #ccc;
+                border-radius: 0.25em;
+                font-size: 1em;
+                margin-bottom: 1em;
+            }
+            input.input-error {
+                outline: 0.125em solid rgb(255, 72, 72);
+            }
+
+            button{
+                width: 100%;
+            }
+        }
 `
 
 export default GlobalStyle;
