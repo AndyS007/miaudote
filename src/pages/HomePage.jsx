@@ -2,6 +2,7 @@ import { styled } from "styled-components"
 import miaudote from "../images/miaudote-logo.svg"
 import Header from "../components/Header"
 import { Link } from "react-router-dom"
+import Footer from "../components/Footer"
 export default function HomePage(){
     return(
         <>
@@ -30,6 +31,7 @@ export default function HomePage(){
                 </Link>
             </div>
         </PageContainer>
+        <Footer />
         </>
     )
 }
