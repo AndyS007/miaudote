@@ -87,6 +87,31 @@ const GlobalStyle = createGlobalStyle`
                 outline: 0.125em solid rgb(255, 72, 72);
             }
 
+            textarea{
+                width: 100%;
+                padding: 0.75em 0.5em;
+                border: 1px solid #ccc;
+                border-radius: 0.25em;
+                font-size: 1em;
+                margin-bottom: 1em;
+            }
+            textarea.input-error {
+                outline: 0.125em solid rgb(255, 72, 72);
+            }
+
+            select{
+                background-color: #fff;
+                width: 100%;
+                padding: 0.75em 0.5em;
+                border: 1px solid #ccc;
+                border-radius: 0.25em;
+                font-size: 1em;
+                margin-bottom: 1em;
+            }
+            select.input-error {
+                outline: 0.125em solid rgb(255, 72, 72);
+            }
+
             button{
                 width: 100%;
             }
