@@ -6,6 +6,7 @@ import SignUpPage from "./pages/SignUpPage";
 import RegisterPet from "./pages/RegisterPet";
 import PetGallery from "./pages/PetGallery";
 import PetInfo from "./pages/PetInfo";
+import MyAccount from "./pages/MyAccount";
 
 export default function App() {
   return (
@@ -19,7 +20,7 @@ export default function App() {
             <Route path="/pets" element={<PetGallery />} />
             <Route path="/pets/:id" element={<PetInfo />}/>
             <Route path="/new-pet" element={<RegisterPet/>}/>
-            <Route path="/my-account" />
+            <Route path="/my-account" element={<MyAccount/>}/>
           </Routes>
         </UserProvider>
       </BrowserRouter>
