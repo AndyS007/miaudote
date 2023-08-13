@@ -12,6 +12,7 @@ export default function Footer(){
 }
 
 const FooterContainer = styled.div`
+    width: 100vw;
     background-color: #DADADA;
     margin: -1.5em;
     margin-top: 2em;
@@ -26,11 +27,15 @@ const FooterContainer = styled.div`
     }
 
     @media screen and (max-width: 767px) {
-        padding: 1em;
+        padding: 0.75em;
+        gap: 0.75em;
         img{
             max-width: 45vw;
             padding-left: 1em;
             margin: -0em 0.125em;
+        }
+        p{
+            font-size: 0.75em;
         }
     }
 `

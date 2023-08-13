@@ -29,9 +29,16 @@ const GlobalStyle = createGlobalStyle`
         font-size: 2em;
         font-weight: 500;
     }
+    h3{
+        font-size: 1.75em;
+        font-weight: 600;
+        text-align: left;
+        color: #6A459C;
+    }
     p{
         font-size: 1.125em;
         text-align: left;
+        line-height: 120%;
         b{
             font-weight: 600;
         }

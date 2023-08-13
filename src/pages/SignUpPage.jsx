@@ -5,6 +5,7 @@ import validator from "validator";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactInputMask from "react-input-mask";
+import Swal from "sweetalert2";
 
 
 export default function SignUpPage(){
@@ -20,22 +21,46 @@ export default function SignUpPage(){
 
         axios.post(`${import.meta.env.VITE_API_BASE_URL}/signup`, {name,email,cpf: onlyNumbersCPF,cellphone: onlyNumbersCellphone,password,confirmPassword})
         .then(resp=>{
-            alert("Seu cadastro foi feito com sucesso, faça login agora.")
-            navigate(`/signin`);
+            Swal.fire({
+                title: 'Seu cadastro foi feito com sucesso.',
+                text: 'Faça login agora.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            }).then(() => {
+                navigate(`/signin`);
+            });
         })
         .catch(error =>{
             console.log(error)
             if(error.response.status === 422){
-                return alert("Os dados informados são inválidos.");
+                return Swal.fire({
+                    title: 'Os dados informados são inválidos.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
             if(error.response.data.message === 'Esse email já está cadastrado.'){
-                return alert("O e-mail informado já está cadastrado, faça login.");
+                return Swal.fire({
+                    title: 'O e-mail informado já está cadastrado.',
+                    text: 'Faça login.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
             if(error.response.data.message === 'Esse cpf já está cadastrado.'){
-                return alert("O CPF informado já está cadastrado, faça login.");
+                return Swal.fire({
+                    title: 'O CPF informado já está cadastrado.',
+                    text: 'Faça login.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
             if(error.response.status === 500){
-                return alert("Tente novamente em alguns instantes");
+                return Swal.fire({
+                    title: 'Tente novamente em alguns instantes.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
         })
     };

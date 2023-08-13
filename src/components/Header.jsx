@@ -5,7 +5,9 @@ import { Link } from "react-router-dom"
 export default function Header(){
     return(
         <HeaderContainer>
-            <img src={logo} alt="Miaudote logo"></img>
+            <Link to='/'>
+                <img src={logo} alt="Miaudote logo"></img>
+            </Link>
 
             <Link to='/pets'>
                 <BotaoAdotar>
@@ -51,6 +53,7 @@ const BotaoCadastro = styled.button`
     border: none;
 `
 const HeaderContainer = styled.div`
+    width: 100vw;
     background-color: #DADADA;
     margin: -1.5em;
     margin-bottom: 0.5em;

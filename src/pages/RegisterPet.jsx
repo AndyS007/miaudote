@@ -8,6 +8,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../contexts/userContext";
+import Swal from "sweetalert2";
 
 
 export default function RegisterPet(){
@@ -29,8 +30,14 @@ export default function RegisterPet(){
     useEffect(()=>{
         const lsUser = JSON.parse(localStorage.getItem('user'));
         if(!lsUser === null){
-            alert ("Você foi desconectado, faça o login novamente.");
-            navigate('/signin');
+            Swal.fire({
+                title: 'Você foi desconectado',
+                text: 'Faça o login novamente.',
+                icon: 'info',
+                confirmButtonText: 'OK',
+            }).then(() => {
+                navigate('/signin');
+            });
         }
     }, [])
 
@@ -45,21 +52,43 @@ export default function RegisterPet(){
             config)
         .then(resp=>{
             const { id } = resp;
-            alert("Animal cadastrado com sucesso!")
-            navigate(`/pets`);
+            Swal.fire({
+                title: 'Animal cadastrado com sucesso!',
+                icon: 'success',
+                confirmButtonText: 'OK',
+            }).then(() => {
+                navigate(`/pets/${id}`);
+            });
         })
         .catch(error =>{
             console.log(error)
             if(error.response.status === 422){
-                return alert("Os dados informados são inválidos.");
+                return Swal.fire({
+                    title: 'Os dados informados são inválidos.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
             if(error.response.status === 401){
-                alert("Token inválido.");
-                navigate('/signin')
-                return;
+                return Swal.fire({
+                    title: 'Token inválido.',
+                    text: 'Faça o login novamente.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                }).then(() => {
+                    navigate('/signin');
+                });
             }
             if(error.response.status === 500){
-                return alert("Tente novamente em alguns instantes");
+                Swal.fire({
+                    title: 'Erro, tente novamente em alguns instantes.',
+                    icon: 'error',
+                    confirmButtonText: 'Voltar para a home',
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        navigate("/");
+                    }
+                });
             }
         })
     }
@@ -139,7 +168,11 @@ Vive bem em apartamento."
                                 const stateName = resp.data.uf;
 
                                 if(!cityName || !stateName){
-                                    return alert("CEP não encontrado.");
+                                    return Swal.fire({
+                                        title: 'CEP não encontrado.',
+                                        icon: 'error',
+                                        confirmButtonText: 'OK',
+                                    });
                                 }
                                 
                                 setCity(cityName);

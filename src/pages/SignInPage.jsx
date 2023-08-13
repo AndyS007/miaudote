@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../contexts/userContext";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 export default function SignInPage(){
     const { register, handleSubmit, formState: {errors} } = useForm();
@@ -24,16 +25,32 @@ export default function SignInPage(){
         })
         .catch(error =>{
             if(error.response.status === 422){
-                return alert("Os dados informados são inválidos.");
+                return Swal.fire({
+                    title: 'Os dados informados são inválidos.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
             if(error.response.status === 404){
-                return alert("O e-mail informado não está cadastrado, cadastre-se primeiro.");
+                return Swal.fire({
+                    title: 'O e-mail informado não está cadastrado, cadastre-se primeiro.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
             if(error.response.status === 401){
-                return alert("Senha incorreta");
+                return Swal.fire({
+                    title: 'Senha incorreta.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
             if(error.response.status === 500){
-                return alert("Tente novamente em alguns instantes");
+                return Swal.fire({
+                    title: 'Tente novamente em alguns instantes.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
         })
     };
