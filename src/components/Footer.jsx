@@ -14,7 +14,7 @@ export default function Footer(){
 const FooterContainer = styled.div`
     width: 100vw;
     background-color: #DADADA;
-    margin: -1.5em;
+    margin-bottom: -1.5em;
     margin-top: 2em;
     padding: 1em 3em;
 

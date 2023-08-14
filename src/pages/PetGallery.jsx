@@ -151,11 +151,12 @@ const PetInfo = styled.div`
     }
 `
 const PageContainer = styled.div`
+    width: 90vw;
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
-    padding-top: 1em;
+    padding-top: 2em;
     text-align: center;
     margin: auto;
     gap: 3em;

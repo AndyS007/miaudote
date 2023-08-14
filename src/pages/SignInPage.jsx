@@ -7,6 +7,9 @@ import { useContext } from "react";
 import { UserContext } from "../contexts/userContext";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import fotoSignIn from "../images/signin-photo.jpg"
 
 export default function SignInPage(){
     const { register, handleSubmit, formState: {errors} } = useForm();
@@ -55,8 +58,10 @@ export default function SignInPage(){
         })
     };
     return(
+        <>
+        <Header />
         <PageContainer>
-            <img src={miaudote} />
+            <TextDiv>
             <div>
                 <h2>Bem-vindo de Volta ao Miaudote!</h2>
                 <p>Faça login para continuar espalhando amor (e petiscos!)</p>
@@ -89,21 +94,48 @@ export default function SignInPage(){
             <Link to='/signup'>
                 <p><u>Crie uma nova conta aqui.</u></p>
             </Link>
+            </TextDiv>
+            <PetPhoto src={fotoSignIn} alt="Entre na sua conta e continue espalhando o amor."/>
         </PageContainer>
+        <Footer />
+        </>
     )
 }
+const PetPhoto = styled.img`
+    width: 50%;
+    height: 100vh;
+    object-fit: contain;
+    
+    @media screen and (max-width: 770px){
+        display: none;
+    }
+`
+const TextDiv = styled.div`
+    padding-left: 6em;
+    width: 60%;
+    flex-direction: column;
+    @media screen and (min-width: 771px) and (max-width: 1200px){
+        padding-left: 4em;
+    }
+    @media screen and (max-width: 770px){
+        display: none;
+        padding-left: 0em;
+        width: 90%;
+        margin: auto;
+    }
+`
 
 const PageContainer = styled.div`
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: 1em;
+    margin: auto;
+    width: 100vw;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    padding-top: 2em;
+    gap: 1.5em;
     text-align: center;
-    img{
-        width: 30vw;
-        padding-bottom: 1.5em;
-    }
+
     button{
         margin-bottom: 1.5em;
     }

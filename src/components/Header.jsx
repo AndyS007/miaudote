@@ -55,7 +55,7 @@ const BotaoCadastro = styled.button`
 const HeaderContainer = styled.div`
     width: 100vw;
     background-color: #DADADA;
-    margin: -1.5em;
+    margin-top: -1.5em;
     margin-bottom: 0.5em;
     padding: 1em 3em;
     box-shadow: 0em 0.25em 0.75em 0.25em rgba(0, 0, 0, 0.2);

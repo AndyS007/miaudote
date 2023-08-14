@@ -20,18 +20,22 @@ const GlobalStyle = createGlobalStyle`
         align-items: center;
         padding: 1.5em;
         background-color: #f0f0f0;
+        overflow-x: hidden;
     }
     h1{
         font-size: 2.5em;
         font-weight: 600;
+        line-height: 120%;
     }
     h2{
         font-size: 2em;
         font-weight: 500;
+        line-height: 120%;
     }
     h3{
         font-size: 1.75em;
         font-weight: 600;
+        line-height: 120%;
         text-align: left;
         color: #6A459C;
     }

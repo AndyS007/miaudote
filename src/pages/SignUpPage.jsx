@@ -6,6 +6,9 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactInputMask from "react-input-mask";
 import Swal from "sweetalert2";
+import Footer from "../components/Footer";
+import Header from "../components/Header";
+import fotoSignUp from "../images/signup-photo.jpg"
 
 
 export default function SignUpPage(){
@@ -65,8 +68,10 @@ export default function SignUpPage(){
         })
     };
     return(
+        <>
+        <Header />
         <PageContainer>
-            <img src={miaudote} />
+            <TextDiv>
             <div>
                 <h2>Junte-se à Família Miaudote!</h2>
                 <p>Juntos, fazemos patinhas felizes encontrarem lares cheios de amor.</p>
@@ -140,21 +145,48 @@ export default function SignUpPage(){
             <Link to='/signin'>
             <p><u>Entre na sua conta aqui.</u></p>
             </Link>
+            </TextDiv>
+            <PetPhoto src={fotoSignUp} alt="Crie uma conta e encontre vários pets em busca de amor."/>
+
         </PageContainer>
+        <Footer />
+        </>
     )
 }
+const PetPhoto = styled.img`
+    width: 50%;
+    height: 100vh;
+    object-fit: contain;
+    
+    @media screen and (max-width: 770px){
+        display: none;
+    }
+`
+const TextDiv = styled.div`
+    padding-left: 6em;
+    width: 60%;
+    flex-direction: column;
+    @media screen and (min-width: 771px) and (max-width: 1200px){
+        padding-left: 4em;
+    }
+    @media screen and (max-width: 770px){
+        display: none;
+        padding-left: 0em;
+        width: 90%;
+        margin: auto;
+    }
+`
 
 const PageContainer = styled.div`
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding-top: 1em;
+    margin: auto;
+    width: 100vw;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: start;
+    padding-top: 2em;
+    gap: 1.5em;
     text-align: center;
-    img{
-        width: 30vw;
-        padding-bottom: 1.5em;
-    }
     button{
         margin-bottom: 1.5em;
     }
