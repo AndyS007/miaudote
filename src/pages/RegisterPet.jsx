@@ -51,7 +51,7 @@ export default function RegisterPet(){
             {name, photo, category, description, characteristics, cep: onlyNumbersCEP, city, state},
             config)
         .then(resp=>{
-            const { id } = resp;
+            const { id } = resp.data;
             Swal.fire({
                 title: 'Animal cadastrado com sucesso!',
                 icon: 'success',

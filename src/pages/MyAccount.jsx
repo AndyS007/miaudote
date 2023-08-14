@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/userContext";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { TailSpin } from "react-loader-spinner";
 import iconEye from "../images/icon-eye.svg"
 import iconToggleOff from "../images/icon-toggle-off.svg"
@@ -119,6 +119,7 @@ export default function MyAccount(){
                         });
                     })
                     .catch((error) => {
+                        console.log(error)
                         if(error.response.status === 401){
                             return Swal.fire({
                                 title: 'Token inválido.',
@@ -168,6 +169,14 @@ export default function MyAccount(){
                         </UserContact>
                         <Pets>
                             <h3>Gerencie seus pets cadastrados:</h3>
+                            {userInfo.pets.length === 0 ? (
+                                <>
+                                    <p>Você ainda não cadastrou nenhum pet.</p>
+                                    <Link to="/new-pet">
+                                        <button>Cadastrar um pet!</button>
+                                    </Link>
+                                </>
+                            ) : (
                             <PetsList>
                                 {userInfo.pets.map((pet) => (
                                 <PetItem key={pet.petId}>
@@ -193,6 +202,7 @@ export default function MyAccount(){
                                 </PetItem>
                                 ))}
                             </PetsList>
+                            )}
                         </Pets>
                     </InfoContainer>
                 </>)}
@@ -217,6 +227,9 @@ const InfoContainer = styled.div`
 `
 const Pets = styled.div`
     padding-top: 1.5em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
 `
 const UserContact = styled.div`
     display: flex;
