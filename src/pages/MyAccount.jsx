@@ -1,24 +1,29 @@
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { TailSpin } from "react-loader-spinner";
+import { Link, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../contexts/userContext";
-import axios from "axios";
-import Swal from "sweetalert2";
-import { Link, useNavigate } from "react-router-dom";
-import { TailSpin } from "react-loader-spinner";
 import iconEye from "../images/icon-eye.svg";
 import iconToggleOff from "../images/icon-toggle-off.svg";
 import iconToggleOn from "../images/icon-toggle-on.svg";
 import iconTrash from "../images/icon-trash.svg";
-import { set } from "react-hook-form";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { firestore } from "../lib/firebase";
 
 import { useAuth } from "../contexts/AuthContext";
+import Swal from "sweetalert2";
 
 export default function MyAccount() {
-  const getPets = async (ownerId) => {
+  const getRegisteredPets = async (ownerId) => {
     const petsCollection = collection(firestore, "pets"); // replace 'pets' with your actual collection name
     const q = query(petsCollection, where("owner", "==", ownerId));
     const querySnapshot = await getDocs(q);
@@ -30,21 +35,57 @@ export default function MyAccount() {
 
     return pets;
   };
+  const getAppliedPets = async (uid) => {
+    const petsCollection = collection(firestore, "pets"); // replace 'pets' with your actual collection name
+    const q = query(petsCollection, where("applicants", "array-contains", uid));
+    const querySnapshot = await getDocs(q);
+    const pets = [];
+    querySnapshot.forEach((doc) => {
+      pets.push({ ...doc.data(), id: doc.id });
+      console.log(doc.id, " => ", doc.data());
+    });
+
+    return pets;
+  };
   const { currentUser } = useAuth();
-  const [userInfo, setUserInfo] = useState();
   const [registeredPets, setRegisteredPets] = useState([]);
+  const [appliedPets, setAppliedPets] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const changeAvailable = () => {};
+  const toggleAdopted = async (petId) => {
+    console.log(petId);
+    const docRef = doc(firestore, "pets", petId);
+    const docSnap = await getDoc(docRef);
+    console.log(docSnap.data());
+    const newAdopted = !docSnap.data().adopted;
+    await updateDoc(docRef, {
+      adopted: newAdopted,
+    });
+    console.log(petId, "pet adopted status changed");
+    const state = newAdopted ? "adopted" : "unadopted";
+    Swal.fire({
+      title: "Pet set as " + state + "!",
+      icon: "success",
+      confirmButtonText: "OK",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate(0);
+      }
+    });
+  };
   const deletePet = () => {
     alert("Pet deleted");
   };
   useEffect(() => {
     //   const pets = await getPets(currentUser.uid);
-    getPets(currentUser.uid).then((pets) => {
-      setRegisteredPets(pets);
+    const init = async () => {
+      const rPets = await getRegisteredPets(currentUser.uid);
+      setRegisteredPets(rPets);
+      const aPets = await getAppliedPets(currentUser.uid);
+      setAppliedPets(aPets);
       setLoading(false);
-    });
+    };
+    init();
   }, [currentUser.uid]);
 
   return (
@@ -74,12 +115,12 @@ export default function MyAccount() {
             </InfoDiv>
             <InfoContainer>
               <Pets>
-                <h3>Your registered pets:</h3>
+                <h3>Registered Pets:</h3>
                 {registeredPets.length === 0 ? (
                   <>
-                    <p>Você ainda não cadastrou nenhum pet.</p>
+                    <p>You have not registered any pets yet.</p>
                     <Link to='/new-pet'>
-                      <button>Cadastrar um pet!</button>
+                      <button>Register a pet now!</button>
                     </Link>
                   </>
                 ) : (
@@ -99,12 +140,40 @@ export default function MyAccount() {
                             <img
                               src={pet.adopted ? iconToggleOn : iconToggleOff}
                               onClick={() => {
-                                // changeAvailable(pet.petId, pet.available);
+                                // toogle pet.adopted
+                                toggleAdopted(pet.id);
                               }}
                             />
+                          </div>
+                        </PetInfo>
+                      </PetItem>
+                    ))}
+                  </PetsList>
+                )}
+              </Pets>
+            </InfoContainer>
+            <InfoContainer>
+              <Pets>
+                <h3>Applied Pets:</h3>
+                {appliedPets.length === 0 ? (
+                  <>
+                    <p>You have not registered any pets yet.</p>
+                    <Link to='/pets'>
+                      <button>Adopt a pet now!</button>
+                    </Link>
+                  </>
+                ) : (
+                  <PetsList>
+                    {appliedPets.map((pet) => (
+                      <PetItem key={pet.id}>
+                        <img src={pet.imageUrl} alt={`${pet.name}`} />
+                        <PetInfo>
+                          <h3>{pet.name}</h3>
+                          <p>{pet.description}</p>
+                          <div>
                             <img
-                              src={iconTrash}
-                              onClick={() => deletePet(pet.petId)}
+                              src={iconEye}
+                              onClick={() => navigate(`/pets/${pet.id}`)}
                             />
                           </div>
                         </PetInfo>

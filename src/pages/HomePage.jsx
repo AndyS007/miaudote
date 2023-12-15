@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 export default function HomePage() {
   const { currentUser, signInWithGoogle } = useAuth();
-  const navigate = useNavigate();
   const onClickRegisterWithoutLogIn = () => {
     Swal.fire({
       title: "You need to be logged in to register a pet",

@@ -16,10 +16,12 @@ export default function PetGallery() {
     const fetchPets = async () => {
       const petCollection = collection(firestore, "pets");
       const petSnapshot = await getDocs(petCollection);
-      const petList = petSnapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id, // get the auto-generated ID
-      }));
+      const petList = petSnapshot.docs
+        .map((doc) => ({
+          ...doc.data(),
+          id: doc.id, // get the auto-generated ID
+        }))
+        .filter((pet) => !pet.adopted);
 
       setPets(petList);
       console.log("petList fetched from firestore", petList);
