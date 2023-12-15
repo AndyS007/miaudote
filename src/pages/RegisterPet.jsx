@@ -58,7 +58,7 @@ export default function RegisterPet() {
               owner: currentUser.uid,
               description,
               imageUrl: downloadURL,
-              adpoted: false,
+              adopted: false,
               applicants: [],
             });
             console.log("File available at", downloadURL);
