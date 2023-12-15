@@ -14,6 +14,20 @@ import {
 
 const AuthContext = React.createContext();
 
+/**
+ *
+ * @returns {
+ *  currentUser: firebase.User,
+ * login: (email, password) => Promise<firebase.auth.UserCredential>,
+ * signInWithGoogle: () => Promise<firebase.auth.UserCredential>,
+ * signup: (email, password) => Promise<firebase.auth.UserCredential>,
+ * logout: () => Promise<void>,
+ * resetPassword: (email) => Promise<void>,
+ * updateEmail: (email) => Promise<void>,
+ * updatePassword: (password) => Promise<void>,
+ * }
+ *
+ */
 export function useAuth() {
   return useContext(AuthContext);
 }
@@ -30,12 +44,12 @@ export function AuthProvider({ children }) {
     return signInWithPopup(auth, provider);
   }
 
-  function login(email, password) {
+  function logIn(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
-  function logout() {
-    return signOut();
+  function logOut() {
+    return signOut(auth);
   }
 
   function resetPassword(email) {
@@ -54,17 +68,17 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
       setLoading(false);
+      console.log("user state changed", user);
     });
-
     return unsubscribe;
   }, []);
 
   const value = {
     currentUser,
-    login,
+    logIn,
     signInWithGoogle,
     signup,
-    logout,
+    logOut,
     resetPassword,
     updateEmail,
     updatePassword,

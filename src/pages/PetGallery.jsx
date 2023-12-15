@@ -1,35 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { styled } from "styled-components";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import axios from "axios";
-import { styled } from "styled-components";
 import pawButton from "../images/paw1.svg";
-import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
+import { collection, getDocs } from "firebase/firestore";
+import { firestore } from "../lib/firebase";
 
 export default function PetGallery() {
   const [pets, setPets] = useState([]);
   const navigate = useNavigate();
+  useEffect(() => {
+    const fetchPets = async () => {
+      const petCollection = collection(firestore, "pets");
+      const petSnapshot = await getDocs(petCollection);
+      const petList = petSnapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id, // get the auto-generated ID
+      }));
 
-  //   useEffect(() => {
-  //     axios
-  //       .get(`${import.meta.env.VITE_API_BASE_URL}/pets`)
-  //       .then((resp) => {
-  //         console.log(resp.data);
-  //         setPets(resp.data);
-  //       })
-  //       .catch((error) => {
-  //         Swal.fire({
-  //           title: "No pets found",
-  //           icon: "error",
-  //           confirmButtonText: "Back to homepage",
-  //         }).then((result) => {
-  //           if (result.isConfirmed) {
-  //             navigate("/");
-  //           }
-  //         });
-  //       });
-  //   }, []);
+      setPets(petList);
+      console.log("petList fetched from firestore", petList);
+    };
+
+    fetchPets();
+  }, []);
   return (
     <>
       <Header />
@@ -47,17 +42,15 @@ export default function PetGallery() {
             {pets.map((pet) => (
               <PetInfo key={pet.id}>
                 <img
-                  src={pet.photo}
+                  src={pet.imageUrl}
                   onClick={() => navigate(`/pets/${pet.id}`)}
                 />
                 <TextDiv>
                   <h3>{pet.name}</h3>
-                  <p>
-                    {pet.city}, {pet.state}
-                  </p>
+                  <p>{pet.description}</p>
                   <PawButton
                     src={pawButton}
-                    alt='Abrir pet'
+                    alt='pet'
                     onClick={() => navigate(`/pets/${pet.id}`)}
                   />
                 </TextDiv>

@@ -73,6 +73,9 @@ const GlobalStyle = createGlobalStyle`
         border-radius: 0.25em;
         cursor: pointer;
     }
+    button:hover{
+        opacity: 0.7;
+    }
 
         form{
             display: flex;

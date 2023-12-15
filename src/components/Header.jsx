@@ -1,8 +1,11 @@
 import { styled } from "styled-components";
 import logo from "../images/FurEver.svg";
 import { Link } from "react-router-dom";
+import GoogleSignIn from "./GoogleSignIn";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Header() {
+  const { currentUser, signInWithGoogle, logOut } = useAuth();
   return (
     <HeaderContainer>
       <Link to='/'>
@@ -14,13 +17,12 @@ export default function Header() {
       </Link>
 
       <div>
-        <Link to='/signin'>
-          <DimmedButton>Sign In</DimmedButton>
-        </Link>
-
-        <Link to='/signup'>
-          <BotaoCadastro>Register</BotaoCadastro>
-        </Link>
+        {currentUser ? (
+          <DimmedButton>My Account</DimmedButton>
+        ) : (
+          <GoogleSignIn />
+        )}
+        {currentUser && <DimmedButton onClick={logOut}>Sign Out</DimmedButton>}
       </div>
     </HeaderContainer>
   );
@@ -28,8 +30,8 @@ export default function Header() {
 const DimmedButton = styled.button`
   font-size: 1.25em;
   min-width: max-content;
-  background-color: #dadada;
-  color: #6a459c;
+  background-color: #6a459c;
+  color: #fff;
   border: none;
 `;
 const AdoptButton = styled.button`
@@ -37,13 +39,6 @@ const AdoptButton = styled.button`
   min-width: max-content;
   background-color: #dadada;
   color: #6a459c;
-  border: none;
-`;
-const BotaoCadastro = styled.button`
-  font-size: 1.25em;
-  min-width: max-content;
-  background-color: #6a459c;
-  color: #fff;
   border: none;
 `;
 const HeaderContainer = styled.div`
@@ -76,9 +71,6 @@ const HeaderContainer = styled.div`
     div {
       display: flex;
       gap: 0em;
-    }
-    ${BotaoCadastro} {
-      display: none;
     }
     ${AdoptButton} {
       display: none;

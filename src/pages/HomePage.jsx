@@ -3,7 +3,9 @@ import Header from "../components/Header";
 import { Link } from "react-router-dom";
 import Footer from "../components/Footer";
 import fotoHome from "../images/home-photo.jpg";
+import { useAuth } from "../contexts/AuthContext";
 export default function HomePage() {
+  const { currentUser, signInWithGoogle } = useAuth();
   return (
     <>
       <Header />
@@ -23,9 +25,15 @@ export default function HomePage() {
             Register a pet for adoption and help us unite adorable animals with
             loving families.
           </p>
-          <Link to='/new-pet'>
-            <button>Register a pet</button>
-          </Link>
+          {currentUser ? (
+            <Link to='/new-pet'>
+              <button>Register a pet</button>
+            </Link>
+          ) : (
+            <Link>
+              <button onClick={signInWithGoogle}>Register a pet</button>
+            </Link>
+          )}
         </TextDiv>
         <PetPhoto src={fotoHome} />
       </PageContainer>
