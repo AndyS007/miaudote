@@ -5,10 +5,13 @@ import { styled } from "styled-components";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { firestore, storage } from "../lib/firebase";
+import Swal from "sweetalert2";
 export default function RegisterPet() {
   const { currentUser } = useAuth();
   function UploadForm() {
+    const navigate = useNavigate();
     const [name, setName] = useState("");
     const [species, setSpecies] = useState("");
     const [age, setAge] = useState("");
@@ -58,6 +61,15 @@ export default function RegisterPet() {
               applicants: [],
             });
             console.log("File available at", downloadURL);
+            Swal.fire({
+              title: "Pet registered!",
+              icon: "success",
+              confirmButtonText: "Back to homepage",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                navigate("/");
+              }
+            });
           });
         }
       );

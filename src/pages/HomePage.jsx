@@ -9,24 +9,16 @@ import Swal from "sweetalert2";
 export default function HomePage() {
   const { currentUser, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
-  const onClickRegister = async () => {
-    try {
-      if (currentUser) {
-        navigate("/new-pet");
-      } else {
-        Swal.fire({
-          title: "You need to be logged in to register a pet",
-          icon: "error",
-          confirmButtonText: "Login now",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            signInWithGoogle();
-          }
-        });
+  const onClickRegisterWithoutLogIn = () => {
+    Swal.fire({
+      title: "You need to be logged in to register a pet",
+      icon: "error",
+      confirmButtonText: "Login now",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        signInWithGoogle();
       }
-    } catch (error) {
-      alert("Error applying for pet, please try again later");
-    }
+    });
   };
 
   return (
@@ -48,9 +40,17 @@ export default function HomePage() {
             Register a pet for adoption and help us unite adorable animals with
             loving families.
           </p>
-          <Link>
-            <button onClick={onClickRegister}>Register a pet</button>
-          </Link>
+          {currentUser ? (
+            <Link to='/new-pet'>
+              <button>Register a pet</button>
+            </Link>
+          ) : (
+            <Link>
+              <button onClick={onClickRegisterWithoutLogIn}>
+                Register a pet
+              </button>
+            </Link>
+          )}
         </TextDiv>
         <PetPhoto src={fotoHome} />
       </PageContainer>

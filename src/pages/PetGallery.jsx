@@ -4,11 +4,13 @@ import { styled } from "styled-components";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import pawButton from "../images/paw1.svg";
+import { TailSpin } from "react-loader-spinner";
 import { collection, getDocs } from "firebase/firestore";
 import { firestore } from "../lib/firebase";
 
 export default function PetGallery() {
   const [pets, setPets] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchPets = async () => {
@@ -23,8 +25,11 @@ export default function PetGallery() {
       console.log("petList fetched from firestore", petList);
     };
 
-    fetchPets();
+    fetchPets().then(() => {
+      setLoading(false);
+    });
   }, []);
+  if (loading) return <TailSpin color='#6A459C' height={80} width={80} />;
   return (
     <>
       <Header />

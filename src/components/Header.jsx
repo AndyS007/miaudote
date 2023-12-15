@@ -20,7 +20,13 @@ export default function Header() {
 
       <div>
         {currentUser ? (
-          <DimmedButton>My Account</DimmedButton>
+          <DimmedButton
+            onClick={() => {
+              navigate("/my-account");
+            }}
+          >
+            My Account
+          </DimmedButton>
         ) : (
           <GoogleSignIn
             callback={() => {
