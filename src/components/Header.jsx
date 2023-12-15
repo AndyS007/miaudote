@@ -3,9 +3,11 @@ import logo from "../images/FurEver.svg";
 import { Link } from "react-router-dom";
 import GoogleSignIn from "./GoogleSignIn";
 import { useAuth } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
-  const { currentUser, signInWithGoogle, logOut } = useAuth();
+  const { currentUser, logOut } = useAuth();
+  const navigate = useNavigate();
   return (
     <HeaderContainer>
       <Link to='/'>
@@ -20,7 +22,11 @@ export default function Header() {
         {currentUser ? (
           <DimmedButton>My Account</DimmedButton>
         ) : (
-          <GoogleSignIn />
+          <GoogleSignIn
+            callback={() => {
+              navigate("/my-account");
+            }}
+          />
         )}
         {currentUser && <DimmedButton onClick={logOut}>Sign Out</DimmedButton>}
       </div>

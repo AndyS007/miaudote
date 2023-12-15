@@ -1,36 +1,44 @@
+import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
+import { TailSpin } from "react-loader-spinner";
+import { useNavigate, useParams } from "react-router-dom";
 import { styled } from "styled-components";
+import Swal from "sweetalert2";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { useNavigate, useParams } from "react-router-dom";
-import { TailSpin } from "react-loader-spinner";
-import Swal from "sweetalert2";
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { firestore, storage } from "../lib/firebase";
-import { ref } from "firebase/storage";
+import { firestore } from "../lib/firebase";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function PetInfo() {
+  const { currentUser, signInWithGoogle } = useAuth();
   const [pet, setPet] = useState({});
   const { id } = useParams();
+  const ref = useRef(null);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [isPetAvailable, setIsPetAvailable] = useState(true);
+  const [hasApplied, setHasApplied] = useState(false);
   useEffect(() => {
     const fetchPet = async () => {
       try {
         // Fetch pet based on id
         const docRef = doc(firestore, "pets", id);
+        ref.current = docRef;
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const petData = docSnap.data();
 
           setPet({ ...petData, id: docSnap.id });
+          const applied = !!petData.applicants?.find(
+            (applicant) => applicant === currentUser?.uid
+          );
+          console.log("user applied?", applied);
+          setHasApplied(applied);
         } else {
           console.log("No such pet found!");
         }
       } catch (error) {
+        console.error(error);
         Swal.fire({
           title: "Error fetching pet",
           icon: "error",
@@ -46,42 +54,30 @@ export default function PetInfo() {
     fetchPet().then(() => {
       setLoading(false);
     });
-  }, [id, navigate]); // Ensure useEffect runs again if id changes
+  }, [id, navigate, currentUser]); // Ensure useEffect runs again if id changes
 
-  const formattedDate = (() => {
-    const timestamp = pet.registeredAt;
-    const date = new Date(timestamp);
-
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-
-    return `${day}/${month}/${year}`;
-  })();
-
-  function popup() {
-    Swal.fire({
-      title: "Quer adotar?",
-      html: `
-            Para adotar esse pet ou saber mais sobre ele, entre em contato com o tutor pelos canais abaixo:<br>
-            <b>E-mail:</b> ${pet.ownerEmail}<br>
-            <b>Telefone:</b> ${pet.ownerCellphone}`,
-      icon: "question",
-      showCloseButton: false,
-      showCancelButton: true,
-      focusConfirm: false,
-      confirmButtonText: "Copiar E-mail",
-      cancelButtonText: "Copiar Telefone",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigator.clipboard.writeText(pet.ownerEmail);
-        Swal.fire("E-mail copiado!", "", "success");
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        navigator.clipboard.writeText(pet.ownerCellphone);
-        Swal.fire("Telefone copiado!", "", "success");
+  const onClickAdopt = async () => {
+    try {
+      if (currentUser) {
+        await updateDoc(ref.current, {
+          applicants: arrayUnion(currentUser.uid),
+        });
+        setHasApplied(true);
+      } else {
+        Swal.fire({
+          title: "You need to be logged in to adopt a pet",
+          icon: "error",
+          confirmButtonText: "Login now",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            signInWithGoogle();
+          }
+        });
       }
-    });
-  }
+    } catch (error) {
+      alert("Error applying for pet, please try again later");
+    }
+  };
 
   return (
     <>
@@ -95,33 +91,23 @@ export default function PetInfo() {
               <DivInfo>
                 <div>
                   <h3>{pet.name}</h3>
-                  <p>
-                    Postado em {formattedDate} por {pet.ownerName}
-                  </p>
-                  <p>
-                    {pet.city} - {pet.state}
-                  </p>
-                  {isPetAvailable ? (
-                    <p>Esse pet está procurando uma casa cheia de amor.</p>
-                  ) : (
-                    <p>Esse pet já encontrou um lar.</p>
-                  )}
                 </div>
-                <button disabled={!isPetAvailable} onClick={popup}>
-                  QUERO ADOTAR
-                </button>
+                <div>
+                  <p>{pet.description}</p>
+                </div>
+                <InfosSecundarias>
+                  <p>
+                    {pet.applicants?.length ?? 0} people waiting to adopt it
+                  </p>
+                  <button disabled={hasApplied} onClick={onClickAdopt}>
+                    {hasApplied
+                      ? "You have already applied"
+                      : "I want to adopt"}
+                  </button>
+                </InfosSecundarias>
               </DivInfo>
               <img src={pet.imageUrl} />
             </InfoPrincipal>
-            <InfosSecundarias>
-              <h3>História de {pet.name}</h3>
-              <p>{pet.description}</p>
-              <h3>Características do pet</h3>
-              <p>{pet.characteristics}</p>
-              <button disabled={!isPetAvailable} onClick={popup}>
-                QUERO ADOTAR
-              </button>
-            </InfosSecundarias>
           </>
         )}
       </PageContainer>
@@ -177,9 +163,11 @@ const InfosSecundarias = styled.div`
   flex-direction: column;
   gap: 1em;
   align-items: center;
+  justify-content: center;
   h3,
   p {
     width: 100%;
+    text-align: center;
   }
 
   button {
