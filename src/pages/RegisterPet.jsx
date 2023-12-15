@@ -56,6 +56,7 @@ export default function RegisterPet() {
               species,
               age,
               owner: currentUser.uid,
+              description,
               imageUrl: downloadURL,
               adpoted: false,
               applicants: [],

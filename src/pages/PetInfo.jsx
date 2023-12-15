@@ -61,6 +61,7 @@ export default function PetInfo() {
       if (currentUser) {
         await updateDoc(ref.current, {
           applicants: arrayUnion(currentUser.uid),
+          applicantsEmails: arrayUnion(currentUser.email),
         });
         setHasApplied(true);
       } else {
