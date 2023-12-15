@@ -73,9 +73,6 @@ export default function MyAccount() {
       }
     });
   };
-  const deletePet = () => {
-    alert("Pet deleted");
-  };
   useEffect(() => {
     //   const pets = await getPets(currentUser.uid);
     const init = async () => {

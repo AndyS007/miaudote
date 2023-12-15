@@ -8,6 +8,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { firestore } from "../lib/firebase";
 import { useAuth } from "../contexts/AuthContext";
+import ApplicantsList from "../components/ApplicantsList";
 
 export default function PetInfo() {
   const { currentUser, signInWithGoogle } = useAuth();
@@ -17,6 +18,7 @@ export default function PetInfo() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [hasApplied, setHasApplied] = useState(false);
+  const isOwner = pet.owner === currentUser?.uid;
   useEffect(() => {
     const fetchPet = async () => {
       try {
@@ -92,20 +94,26 @@ export default function PetInfo() {
               <DivInfo>
                 <div>
                   <h3>{pet.name}</h3>
+
+                  <p>{isOwner && " (Registerd By You)"}</p>
                 </div>
                 <div>
                   <p>{pet.description}</p>
                 </div>
-                <InfosSecundarias>
-                  <p>
-                    {pet.applicants?.length ?? 0} people waiting to adopt it
-                  </p>
-                  <button disabled={hasApplied} onClick={onClickAdopt}>
-                    {hasApplied
-                      ? "You have already applied"
-                      : "I want to adopt"}
-                  </button>
-                </InfosSecundarias>
+                {isOwner ? (
+                  <ApplicantsList applicants={pet.applicantsEmails} />
+                ) : (
+                  <InfosSecundarias>
+                    <p>
+                      {pet.applicants?.length ?? 0} people waiting to adopt it
+                    </p>
+                    <button disabled={hasApplied} onClick={onClickAdopt}>
+                      {hasApplied
+                        ? "You have already applied"
+                        : "I want to adopt"}
+                    </button>
+                  </InfosSecundarias>
+                )}
               </DivInfo>
               <img src={pet.imageUrl} />
             </InfoPrincipal>
