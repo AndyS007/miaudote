@@ -228,6 +228,7 @@ const Pets = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1em;
+  width: 100%;
 `;
 const UserContact = styled.div`
   display: flex;
