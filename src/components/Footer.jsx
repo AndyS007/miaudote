@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <FooterContainer>
       <img src={logo} alt='Miaudote logo'></img>
-      <p>From Xiaoyu Liu</p>
+      <p>Designed by Xiaoyu Liu & Haopu Tian</p>
     </FooterContainer>
   );
 }

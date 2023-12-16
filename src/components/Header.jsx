@@ -14,12 +14,12 @@ export default function Header() {
         <img src={logo} alt=' logo' />
       </Link>
 
-      <Link to='/pets'>
+      {/* <Link to='/pets'>
         <AdoptButton>Adoption</AdoptButton>
       </Link>
       <Link to='/blog'>
         <AdoptButton>Blog</AdoptButton>
-      </Link>
+      </Link> */}
 
       <div>
         {currentUser ? (
