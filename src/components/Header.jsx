@@ -17,6 +17,9 @@ export default function Header() {
       <Link to='/pets'>
         <AdoptButton>Adoption</AdoptButton>
       </Link>
+      <Link to='/blog'>
+        <AdoptButton>Blog</AdoptButton>
+      </Link>
 
       <div>
         {currentUser ? (

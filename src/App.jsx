@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import SignInPage from "./pages/SignInPage";
 import UserProvider from "./contexts/userContext";
-import SignUpPage from "./pages/SignUpPage";
+import Blog from "./pages/Blog";
 import RegisterPet from "./pages/RegisterPet";
 import PetGallery from "./pages/PetGallery";
 import PetInfo from "./pages/PetInfo";
@@ -17,8 +17,7 @@ export default function App() {
           <AuthProvider>
             <Routes>
               <Route path='/' element={<HomePage />} />
-              <Route path='/signin' element={<SignInPage />} />
-              <Route path='/signup' element={<SignUpPage />} />
+              <Route path='/blog' element={<Blog />} />
               <Route path='/pets' element={<PetGallery />} />
               <Route path='/pets/:id' element={<PetInfo />} />
               <Route path='/new-pet' element={<RegisterPet />} />

@@ -51,13 +51,12 @@ export default function HomePage() {
             </Link>
           )}
           <p>
-            Are you ready for adopt a pet? Here are some educational resources you could follow.
+            Are you ready for adopt a pet? Here are some educational resources
+            you could follow.
           </p>
-          <Link to='/signin'>
+          <Link to='/blog'>
             <button>Tips for adoption</button>
           </Link>
-
-
         </TextDiv>
         <PetPhoto src={fotoHome} />
       </PageContainer>
