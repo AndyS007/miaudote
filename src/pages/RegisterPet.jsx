@@ -78,45 +78,35 @@ export default function RegisterPet() {
 
     return (
       <form onSubmit={handleSubmit}>
-        <label>
-          Name:
-          <input
-            type='text'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </label>
+        <label>Name:</label>
+        <input
+          type='text'
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-        <label>
-          Species:
-          <input
-            type='text'
-            value={species}
-            onChange={(e) => setSpecies(e.target.value)}
-          />
-        </label>
-        <label>
-          Description:
-          <input
-            type='text'
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </label>
+        <label>Species:</label>
+        <input
+          type='text'
+          value={species}
+          onChange={(e) => setSpecies(e.target.value)}
+        />
+        <label>Description:</label>
+        <input
+          type='text'
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
 
-        <label>
-          Age:
-          <input
-            type='number'
-            value={age}
-            onChange={(e) => setAge(e.target.value)}
-          />
-        </label>
+        <label>Age:</label>
+        <input
+          type='number'
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
+        />
 
-        <label>
-          Image:
-          <input type='file' onChange={handleImageChange} />
-        </label>
+        <label>Image:</label>
+        <input type='file' onChange={handleImageChange} />
 
         <button type='submit'>Register</button>
       </form>

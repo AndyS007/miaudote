@@ -144,7 +144,7 @@ const InfoPrincipal = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row-reverse;
-  align-items: center;
+  align-items: stretch;
   gap: 0.5em;
 
   button {
@@ -193,8 +193,8 @@ const InfosSecundarias = styled.div`
 `;
 
 const PageContainer = styled.div`
-  min-height: 100vh;
-  width: 60vw;
+  min-height: 80vh;
+  width: 80%;
   margin: auto;
   display: flex;
   flex-direction: column;

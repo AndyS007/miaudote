@@ -23,13 +23,13 @@ export default function Header() {
 
       <div>
         {currentUser ? (
-          <DimmedButton
+          <AccountButton
             onClick={() => {
               navigate("/my-account");
             }}
           >
             My Account
-          </DimmedButton>
+          </AccountButton>
         ) : (
           <GoogleSignIn
             callback={() => {
@@ -37,23 +37,25 @@ export default function Header() {
             }}
           />
         )}
-        {currentUser && <DimmedButton onClick={logOut}>Sign Out</DimmedButton>}
+        {currentUser && (
+          <SignOutButton onClick={logOut}>Sign Out</SignOutButton>
+        )}
       </div>
     </HeaderContainer>
   );
 }
-const DimmedButton = styled.button`
+const SignOutButton = styled.button`
   font-size: 1.25em;
   min-width: max-content;
   background-color: #6a459c;
   color: #fff;
   border: none;
 `;
-const AdoptButton = styled.button`
+const AccountButton = styled.button`
   font-size: 1.25em;
   min-width: max-content;
-  background-color: #dadada;
-  color: #6a459c;
+  color: #dadada;
+  background-color: #6a459c;
   border: none;
 `;
 const HeaderContainer = styled.div`
@@ -87,11 +89,11 @@ const HeaderContainer = styled.div`
       display: flex;
       gap: 0em;
     }
-    ${AdoptButton} {
-      display: none;
-    }
-    ${DimmedButton} {
+    ${AccountButton} {
       font-size: 1em;
+    }
+    ${SignOutButton} {
+      display: none;
     }
   }
 `;
