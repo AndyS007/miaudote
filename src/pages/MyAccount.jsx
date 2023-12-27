@@ -31,7 +31,6 @@ export default function MyAccount() {
     const pets = [];
     querySnapshot.forEach((doc) => {
       pets.push({ ...doc.data(), id: doc.id });
-      console.log(doc.id, " => ", doc.data());
     });
 
     return pets;
@@ -43,7 +42,6 @@ export default function MyAccount() {
     const pets = [];
     querySnapshot.forEach((doc) => {
       pets.push({ ...doc.data(), id: doc.id });
-      console.log(doc.id, " => ", doc.data());
     });
 
     return pets;
@@ -59,8 +57,8 @@ export default function MyAccount() {
   });
   const loading = registeredPetsQuery.isLoading || appliedPetsQuery.isLoading;
   const registeredPetsMutation = useMutation({
-    mutationFn: (petId) => {
-      toggleAdopted(petId);
+    mutationFn: async (petId) => {
+      await toggleAdopted(petId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries("registeredPets");
@@ -77,7 +75,7 @@ export default function MyAccount() {
     console.log(petId);
     const docRef = doc(firestore, "pets", petId);
     const docSnap = await getDoc(docRef);
-    console.log(docSnap.data());
+    console.log(docSnap.data().adopted);
     const newAdopted = !docSnap.data().adopted;
     await updateDoc(docRef, {
       adopted: newAdopted,
