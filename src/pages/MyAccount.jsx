@@ -21,6 +21,7 @@ import { firestore } from "../lib/firebase";
 
 import { useAuth } from "../contexts/AuthContext";
 import Swal from "sweetalert2";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function MyAccount() {
   const getRegisteredPets = async (ownerId) => {
@@ -47,11 +48,31 @@ export default function MyAccount() {
 
     return pets;
   };
+  const queryClient = useQueryClient();
+  const registeredPetsQuery = useQuery({
+    queryKey: ["registeredPets"],
+    queryFn: () => getRegisteredPets(currentUser.uid),
+  });
+  const appliedPetsQuery = useQuery({
+    queryKey: ["appliedPets"],
+    queryFn: () => getAppliedPets(currentUser.uid),
+  });
+  const loading = registeredPetsQuery.isLoading || appliedPetsQuery.isLoading;
+  const registeredPetsMutation = useMutation({
+    mutationFn: (petId) => {
+      toggleAdopted(petId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("registeredPets");
+      Swal.fire({
+        title: "Pet adoption status updated! ",
+        icon: "success",
+        confirmButtonText: "OK",
+      });
+    },
+  });
   const { currentUser } = useAuth();
-  const [registeredPets, setRegisteredPets] = useState([]);
-  const [appliedPets, setAppliedPets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+
   const toggleAdopted = async (petId) => {
     console.log(petId);
     const docRef = doc(firestore, "pets", petId);
@@ -61,29 +82,7 @@ export default function MyAccount() {
     await updateDoc(docRef, {
       adopted: newAdopted,
     });
-    console.log(petId, "pet adopted status changed");
-    const state = newAdopted ? "adopted" : "unadopted";
-    Swal.fire({
-      title: "Pet set as " + state + "!",
-      icon: "success",
-      confirmButtonText: "OK",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        navigate(0);
-      }
-    });
   };
-  useEffect(() => {
-    //   const pets = await getPets(currentUser.uid);
-    const init = async () => {
-      const rPets = await getRegisteredPets(currentUser.uid);
-      setRegisteredPets(rPets);
-      const aPets = await getAppliedPets(currentUser.uid);
-      setAppliedPets(aPets);
-      setLoading(false);
-    };
-    init();
-  }, [currentUser.uid]);
 
   return (
     <>
@@ -113,7 +112,7 @@ export default function MyAccount() {
             <InfoContainer>
               <Pets>
                 <h3>Registered Pets:</h3>
-                {registeredPets.length === 0 ? (
+                {registeredPetsQuery.data?.length === 0 ? (
                   <>
                     <p>You have not registered any pets yet.</p>
                     <Link to='/new-pet'>
@@ -122,23 +121,22 @@ export default function MyAccount() {
                   </>
                 ) : (
                   <PetsList>
-                    {registeredPets.map((pet) => (
+                    {registeredPetsQuery.data?.map((pet) => (
                       <PetItem key={pet.id}>
-                        <img src={pet.imageUrl} alt={`${pet.name}`} />
+                        <StyledLink key={pet.id} to={`/pets/${pet.id}`}>
+                          <img src={pet.imageUrl} alt={`${pet.name}`} />
+                        </StyledLink>
                         <PetInfo>
                           <h3>{pet.name}</h3>
                           <p>{pet.description}</p>
                           <div>
                             <img
-                              src={iconEye}
-                              alt='Ver pet cadastrado'
-                              onClick={() => navigate(`/pets/${pet.id}`)}
-                            />
-                            <img
                               src={pet.adopted ? iconToggleOn : iconToggleOff}
-                              onClick={() => {
-                                // toogle pet.adopted
-                                toggleAdopted(pet.id);
+                              title='Toggle adoption status'
+                              onClick={(event) => {
+                                // toggle pet.adopted
+                                event.stopPropagation();
+                                registeredPetsMutation.mutate(pet.id);
                               }}
                             />
                           </div>
@@ -152,7 +150,7 @@ export default function MyAccount() {
             <InfoContainer>
               <Pets>
                 <h3>Applied Pets:</h3>
-                {appliedPets.length === 0 ? (
+                {appliedPetsQuery.data?.length === 0 ? (
                   <>
                     <p>You have not registered any pets yet.</p>
                     <Link to='/pets'>
@@ -161,18 +159,14 @@ export default function MyAccount() {
                   </>
                 ) : (
                   <PetsList>
-                    {appliedPets.map((pet) => (
+                    {appliedPetsQuery.data.map((pet) => (
                       <PetItem key={pet.id}>
-                        <img src={pet.imageUrl} alt={`${pet.name}`} />
+                        <StyledLink key={pet.id} to={`/pets/${pet.id}`}>
+                          <img src={pet.imageUrl} alt={`${pet.name}`} />
+                        </StyledLink>
                         <PetInfo>
                           <h3>{pet.name}</h3>
                           <p>{pet.description}</p>
-                          <div>
-                            <img
-                              src={iconEye}
-                              onClick={() => navigate(`/pets/${pet.id}`)}
-                            />
-                          </div>
                         </PetInfo>
                       </PetItem>
                     ))}
@@ -281,6 +275,9 @@ const PetItem = styled.div`
     height: 8em;
     object-fit: cover;
     border-radius: 0.5em;
+    &:hover {
+      opacity: 0.7;
+    }
   }
 `;
 
@@ -310,6 +307,7 @@ const PetInfo = styled.div`
     position: absolute;
     bottom: 1em;
     right: 1em;
+    z-index: 100;
 
     img {
       cursor: pointer;
@@ -317,4 +315,7 @@ const PetInfo = styled.div`
       color: #777;
     }
   }
+`;
+const StyledLink = styled(Link)`
+  text-decoration: none;
 `;

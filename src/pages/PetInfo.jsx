@@ -1,71 +1,59 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { TailSpin } from "react-loader-spinner";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
 import Swal from "sweetalert2";
+import ApplicantsList from "../components/ApplicantsList";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
-import { firestore } from "../lib/firebase";
 import { useAuth } from "../contexts/AuthContext";
-import ApplicantsList from "../components/ApplicantsList";
+import { firestore } from "../lib/firebase";
 
 export default function PetInfo() {
   const { currentUser, signInWithGoogle } = useAuth();
-  const [pet, setPet] = useState({});
+  const queryClient = useQueryClient();
   const { id } = useParams();
-  const ref = useRef(null);
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [hasApplied, setHasApplied] = useState(false);
-  const isOwner = pet.owner === currentUser?.uid;
-  useEffect(() => {
-    const fetchPet = async () => {
-      try {
-        // Fetch pet based on id
-        const docRef = doc(firestore, "pets", id);
-        ref.current = docRef;
-        const docSnap = await getDoc(docRef);
+  const petQuery = useQuery({
+    queryKey: ["pet", id],
+    queryFn: () => fetchPet(id),
+  });
 
-        if (docSnap.exists()) {
-          const petData = docSnap.data();
+  const fetchPet = async (id) => {
+    // Fetch pet based on id
+    const docRef = doc(firestore, "pets", id);
+    const docSnap = await getDoc(docRef);
 
-          setPet({ ...petData, id: docSnap.id });
-          const applied = !!petData.applicants?.find(
-            (applicant) => applicant === currentUser?.uid
-          );
-          console.log("user applied?", applied);
-          setHasApplied(applied);
-        } else {
-          console.log("No such pet found!");
-        }
-      } catch (error) {
-        console.error(error);
-        Swal.fire({
-          title: "Error fetching pet",
-          icon: "error",
-          confirmButtonText: "Back to homepage",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            navigate("/");
-          }
-        });
-      }
-    };
+    if (docSnap.exists()) {
+      const petData = docSnap.data();
 
-    fetchPet().then(() => {
-      setLoading(false);
-    });
-  }, [id, navigate, currentUser]); // Ensure useEffect runs again if id changes
+      return { ...petData, id: docSnap.id };
+    } else {
+      throw new Error("No such pet found!");
+    }
+  };
+  const pet = petQuery.data;
+  const isOwner = pet?.owner === currentUser?.uid;
+  const hasApplied = !!pet?.applicants?.find(
+    (applicant) => applicant === currentUser?.uid
+  );
+  const mutation = useMutation({
+    mutationFn: async () => {
+      await updateDoc(doc(firestore, "pets", id), {
+        applicants: arrayUnion(currentUser.uid),
+        applicantsEmails: arrayUnion(currentUser.email),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["pet", id]);
+    },
+  });
 
   const onClickAdopt = async () => {
     try {
       if (currentUser) {
-        await updateDoc(ref.current, {
-          applicants: arrayUnion(currentUser.uid),
-          applicantsEmails: arrayUnion(currentUser.email),
-        });
-        setHasApplied(true);
+        mutation.mutate();
       } else {
         Swal.fire({
           title: "You need to be logged in to adopt a pet",
@@ -86,26 +74,26 @@ export default function PetInfo() {
     <>
       <Header />
       <PageContainer>
-        {loading ? (
+        {petQuery.isLoading ? (
           <TailSpin color='#6A459C' height={80} width={80} />
         ) : (
           <>
             <InfoPrincipal>
               <DivInfo>
                 <div>
-                  <h3>{pet.name}</h3>
+                  <h3>{pet?.name}</h3>
 
                   <p>{isOwner && " (Registerd By You)"}</p>
                 </div>
                 <div>
-                  <p>{pet.description}</p>
+                  <p>{pet?.description}</p>
                 </div>
                 {isOwner ? (
-                  <ApplicantsList applicants={pet.applicantsEmails} />
+                  <ApplicantsList applicants={pet?.applicantsEmails} />
                 ) : (
                   <InfosSecundarias>
                     <p>
-                      {pet.applicants?.length ?? 0} people waiting to adopt it
+                      {pet?.applicants?.length ?? 0} people waiting to adopt it
                     </p>
                     <button disabled={hasApplied} onClick={onClickAdopt}>
                       {hasApplied
@@ -115,7 +103,7 @@ export default function PetInfo() {
                   </InfosSecundarias>
                 )}
               </DivInfo>
-              <img src={pet.imageUrl} />
+              <img src={pet?.imageUrl} />
             </InfoPrincipal>
           </>
         )}
